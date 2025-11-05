@@ -55,19 +55,23 @@ class FeedController extends GetxController {
 
     isLoading.value = true;
     _page++;
-
-    final data = await ApiService.fetchPosts(page: _page, limit: _limit);
-    if (data.isEmpty) {
-      hasMore.value = false;
-    } else {
-      for (var postJson in data) {
-        final user = await ApiService.fetchUser(postJson['userId']);
-        final post = Post.fromJson(postJson, user['name']);
-        posts.add(post);
+    try {
+      final data = await ApiService.fetchPosts(page: _page, limit: _limit);
+      if (data.isEmpty) {
+        hasMore.value = false;
+      } else {
+        for (var postJson in data) {
+          final user = await ApiService.fetchUser(postJson['userId']);
+          final post = Post.fromJson(postJson, user['name']);
+          posts.add(post);
+        }
+        await box.put('cached_posts', posts.map((e) => e.toMap()).toList());
       }
-      await box.put('cached_posts', posts.map((e) => e.toMap()).toList());
+    } catch (e) {
+      _page--;
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   void toggleLike(Post post) {
