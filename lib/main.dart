@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'dart:convert';
-
 import 'package:social_feed/controller/authController.dart';
 import 'package:social_feed/controller/feedController.dart';
 import 'package:social_feed/pages/home_page.dart';
 import 'package:social_feed/pages/login_page.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('appBox');
+  Get.put(AuthController());
+  Get.put(FeedController());
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final AuthController authController = Get.put(AuthController());
-  final FeedController feedController = Get.put(FeedController());
+  final auth = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Mini Social Feed',
-      theme: ThemeData(primarySwatch: Colors.indigo),
-      home: Obx(() {
-        return authController.isLoggedIn.value ? HomePage() : LoginPage();
-      }),
-    );
+    return Obx(() => GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Mini Social Feed',
+          themeMode: ThemeMode.system,
+          theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+          darkTheme: ThemeData.dark(useMaterial3: true),
+          home: auth.isLoggedIn.value ? HomePage() : LoginPage(),
+        ));
   }
 }

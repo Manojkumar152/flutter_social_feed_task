@@ -3,16 +3,15 @@ import 'package:get/get.dart';
 import 'package:social_feed/controller/authController.dart';
 
 class LoginPage extends StatelessWidget {
+  final auth = Get.find<AuthController>();
   final emailController = TextEditingController(text: 'test@user.com');
   final passwordController = TextEditingController(text: '123456');
-  final auth = Get.find<AuthController>();
 
-  void _tryLogin() async {
+  void _login() async {
     final success =
         await auth.login(emailController.text, passwordController.text);
     if (!success) {
-      Get.snackbar('Login failed', 'Invalid credentials',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Login Failed', 'Invalid credentials');
     }
   }
 
@@ -21,27 +20,25 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Card(
-          margin: EdgeInsets.all(24),
           elevation: 8,
+          margin: const EdgeInsets.all(24),
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text('Mini Social Feed',
                     style: Theme.of(context).textTheme.headlineMedium),
+                const SizedBox(height: 16),
                 TextField(
                     controller: emailController,
-                    decoration: InputDecoration(labelText: 'Email')),
+                    decoration: const InputDecoration(labelText: 'Email')),
                 TextField(
                     controller: passwordController,
-                    decoration: InputDecoration(labelText: 'Password'),
+                    decoration: const InputDecoration(labelText: 'Password'),
                     obscureText: true),
-                SizedBox(height: 12),
-                ElevatedButton(onPressed: _tryLogin, child: Text('Login')),
-                SizedBox(height: 8),
-                Text('Email: test@user.com | Password: 123456',
-                    style: TextStyle(fontSize: 12))
+                const SizedBox(height: 16),
+                ElevatedButton(onPressed: _login, child: const Text('Login')),
               ],
             ),
           ),

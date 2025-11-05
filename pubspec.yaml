@@ -38,6 +38,8 @@ dependencies:
   get:
   hive:
   hive_flutter:
+  connectivity_plus:
+  http:
 
 dev_dependencies:
   flutter_test:

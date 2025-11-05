@@ -1,41 +1,65 @@
 import 'package:get/get.dart';
 
 class Post {
-  String id;
-  String author;
-  String content;
-  DateTime createdAt;
-  RxInt likes = 0.obs;
+  final int id;
+  final int userId;
+  final String title;
+  final String body;
+  final String userName;
+
   RxBool liked = false.obs;
+  RxInt likes = 0.obs;
+  RxInt comments = 0.obs;
 
   Post({
     required this.id,
-    required this.author,
-    required this.content,
-    required this.createdAt,
-    int initialLikes = 0,
+    required this.userId,
+    required this.title,
+    required this.body,
+    required this.userName,
+    bool liked = false,
+    int likes = 0,
+    int comments = 0,
   }) {
-    likes.value = initialLikes;
+    this.liked.value = liked;
+    this.likes.value = likes;
+    this.comments.value = comments;
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'author': author,
-        'content': content,
-        'createdAt': createdAt.toIso8601String(),
-        'likes': likes.value,
-        'liked': liked.value,
-      };
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    final p = Post(
+  factory Post.fromJson(Map<String, dynamic> json, String userName) {
+    return Post(
       id: json['id'],
-      author: json['author'],
-      content: json['content'],
-      createdAt: DateTime.parse(json['createdAt']),
-      initialLikes: (json['likes'] ?? 0) as int,
+      userId: json['userId'],
+      title: json['title'],
+      body: json['body'],
+      userName: userName,
+      comments: (json['id'] ?? 0) % 5 + 1,
     );
-    p.liked.value = json['liked'] ?? false;
-    return p;
+  }
+
+  factory Post.fromMap(Map<String, dynamic> map) {
+    return Post(
+      id: map['id'],
+      userId: map['userId'],
+      title: map['title'],
+      body: map['body'],
+      userName: map['userName'],
+      liked: map['liked'] ?? false,
+      likes: map['likes'] ?? 0,
+      comments: map['comments'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'userId': userId,
+      'title': title,
+      'body': body,
+      'userName': userName,
+      'liked': liked.value,
+      'likes': likes.value,
+      'comments': comments.value,
+    };
   }
 }
